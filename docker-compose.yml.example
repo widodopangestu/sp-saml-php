@@ -4,9 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - SP_BASE_URL=http://localhost:8080
-      - IDP_SSO_URL=http://localhost:8081/saml/idp/SSO/alias/asdp-idp
-      - IDP_SLO_URL=http://localhost:8081/saml/idp/logout/alias/asdp-idp
+      - SP_BASE_URL=http://10.1.107.155:9004
+      - IDP_SSO_URL=http://10.1.107.155:9008/saml/idp/SSO/alias/asdp-idp
+      - IDP_SLO_URL=http://10.1.107.155:9008/saml/idp/logout/alias/asdp-idp
       - IDP_ENTITY_ID=asdp-idp
       - IDP_X509CERT= 
           MIIChTCCAe4CCQDo0wjPUK8sMDANBgkqhkiG9w0BAQsFADCBhjELMAkGA1UEBhMC
@@ -26,7 +26,7 @@ services:
     volumes:
       - ./:/usr/app
     ports:
-      - 9004:8080
+      - 9004:9004
 volumes:
   dbdata:
     driver: local

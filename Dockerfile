@@ -1,8 +1,9 @@
-FROM php:7.2-fpm-alpine
+FROM php:7.0-fpm-alpine
 
-RUN apk add --update --no-cache libgd libpng-dev libjpeg-turbo-dev freetype-dev
-
-RUN docker-php-ext-install -j$(nproc) gd
+RUN apk add --update --no-cache libgd libpng-dev libjpeg-turbo-dev freetype-dev libmcrypt-dev libltdl \
+    && docker-php-ext-configure mcrypt \
+    && docker-php-ext-install mcrypt \
+    && docker-php-ext-install -j$(nproc) gd
 
 ENV HOME=/usr/app
 RUN mkdir -p $HOME
@@ -11,7 +12,10 @@ WORKDIR $HOME
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-ADD . $HOME
+ADD composer.json $HOME
+ADD lib $HOME/lib
+ADD extlib $HOME/extlib
+RUN composer install
 
 EXPOSE 8080
 

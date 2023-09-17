@@ -3,11 +3,11 @@
 $spBaseUrl = getenv('SP_BASE_URL'); //or http://<your_domain>
 
 $settingsInfo = array(
-    'debug' => true,
+    'debug'=>true,
     'sp' => array(
         'entityId' => $spBaseUrl . '/metadata.php',
         'assertionConsumerService' => array(
-            'url' => $spBaseUrl . '/acs.php',
+            'url' => $spBaseUrl . '/index.php?acs',
         ),
         'singleLogoutService' => array(
             'url' => $spBaseUrl . '/index.php?sls',

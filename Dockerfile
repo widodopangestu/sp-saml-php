@@ -17,6 +17,6 @@ ADD lib $HOME/lib
 ADD extlib $HOME/extlib
 RUN composer install
 
-EXPOSE 8080
+EXPOSE 9004
 
-CMD [ "php", "-S", "0.0.0.0:8080", "-t", "demo1" ]
+CMD [ "php", "-S", "0.0.0.0:9004", "-t", "demo1" ]

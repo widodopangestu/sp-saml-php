@@ -1,12 +1,20 @@
+version: '3.8'
+
 services:
+  # PHP Service
   php:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: .              # Build context is current directory
+      dockerfile: docker/php/Dockerfile
+    container_name: php83_app # Name our container
+    volumes:
+      - ./:/var/www   # Mount our source code
+    networks:
+      - app-network          # Connect to our network
     environment:
-      - SP_BASE_URL=http://10.1.107.155:9004
-      - IDP_SSO_URL=http://10.1.107.155:9008/saml/idp/SSO/alias/asdp-idp
-      - IDP_SLO_URL=http://10.1.107.155:9008/saml/idp/logout/alias/asdp-idp
+      - SP_BASE_URL=http://localhost:9004
+      - IDP_SSO_URL=http://localhost:8081/saml/idp/SSO/alias/asdp-idp
+      - IDP_SLO_URL=http://localhost:8081/saml/idp/logout/alias/asdp-idp
       - IDP_ENTITY_ID=asdp-idp
       - IDP_X509CERT= 
           MIIChTCCAe4CCQDo0wjPUK8sMDANBgkqhkiG9w0BAQsFADCBhjELMAkGA1UEBhMC
@@ -23,10 +31,25 @@ services:
           SitTfz44LdnFSW9mYaeimwPP8ZtU7/3EJCzLd5eq7N/0kYPNVclZvB45I0UMT77A
           HWrNyScm56MTcEpSuHhJHAqRAgJKbciCTNsFI928EqiWSmu//w0ASBN3bVa8nv8/
           rafuutCq3RskTkHVZnbT5Xa6ITEZxSncow==
-    volumes:
-      - ./:/usr/app
+      - PHP_IDE_CONFIG=serverName=Docker # For Xdebug
+    # Make container restart unless stopped manually
+    restart: unless-stopped
+
+  # Nginx Service
+  nginx:
+    image: nginx:latest      # Use official Nginx image
+    container_name: nginx_app
     ports:
-      - 9004:9004
-volumes:
-  dbdata:
-    driver: local
+      - "9004:80"           # Map port 8080 on our PC to 80 in container
+    volumes:
+      - ./:/var/www  # Mount same source code
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php                 # Wait for PHP container
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge          # Standard Docker network type
